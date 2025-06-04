@@ -1,4 +1,4 @@
-FROM node:18-alpine AS dependencies
+FROM node:14-alpine
 
 # Ajout des outils nécessaires pour compiler sqlite3
 RUN apk add --no-cache \
