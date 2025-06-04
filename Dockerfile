@@ -1,29 +1,27 @@
-# Étape 1 : Build des dépendances
-FROM node:18-alpine AS dependencies
+FROM alpine:latest AS dependencies
 
-WORKDIR /app
+RUN apk add --no-cache \
+    nodejs npm \
+    python3 make g++ \
+    && ln -sf python3 /usr/bin/python
 
-# Install des dépendances système nécessaires à node-sass ou autres
-RUN apk add --no-cache python3 make g++ \
-  && ln -sf python3 /usr/bin/python
-
-COPY package.json ./
-
+COPY package.json .
 RUN npm install
 
-# Étape 2 : Application
-FROM node:18-alpine
+FROM alpine:latest
 
-RUN apk add --no-cache vim
+LABEL org.label-schema.schema-version="1.0"
+LABEL org.label-schema.docker.cmd="docker run -d -p 3000:3000 --name alpine_timeoff"
 
-# Créer un utilisateur non-root
+RUN apk add --no-cache \
+    nodejs npm \
+    vim
+
 RUN adduser --system app --home /app
+USER app
 WORKDIR /app
-
-COPY --chown=app:app . .
-
-# ✅ Copier les node_modules depuis le bon stage nommé
-COPY --from=dependencies /app/node_modules ./node_modules
+COPY . /app
+COPY --from=dependencies /node_modules ./node_modules
 
 EXPOSE 3000
 CMD ["npm", "start"]
