@@ -5,9 +5,7 @@ RUN apk add --no-cache \
   python3 \
   make \
   g++ \
-  && python3 -m ensurepip \
-  && ln -sf python3 /usr/bin/python \
-  && pip3 install --no-cache --upgrade pip setuptools
+  && ln -sf python3 /usr/bin/python
 
 WORKDIR /app
 COPY package.json ./
